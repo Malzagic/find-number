@@ -1,6 +1,6 @@
 import { View, StyleSheet } from "react-native";
-export default function ButtonsView({ children }) {
-  return <View style={styles.buttonsContainer}>{children}</View>;
+export default function ButtonsView({ children, style }) {
+  return <View style={[styles.buttonsContainer, style]}>{children}</View>;
 }
 
 const styles = StyleSheet.create({

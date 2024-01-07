@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet, Alert, FlatList, SafeAreaView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Alert,
+  FlatList,
+  SafeAreaView,
+  useWindowDimensions,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import uuid from "react-native-uuid";
 import Title from "../components/ui/Titile";
@@ -28,6 +35,7 @@ export default function GameScreen({ userNumber, onGameOver }) {
   const initialGuess = generateRandomBetween(1, 100, userNumber);
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
   const [guessRounds, setGuessRounds] = useState([initialGuess]);
+  const { width, height } = useWindowDimensions();
 
   useEffect(() => {
     if (currentGuess === userNumber) {
@@ -66,14 +74,12 @@ export default function GameScreen({ userNumber, onGameOver }) {
   }
 
   const guessRoundsListLength = guessRounds.length;
-
-  return (
-    <View style={styles.screen}>
-      <Title>Opponent's Guess</Title>
+  let content = (
+    <>
       <NumberContainer>{currentGuess}</NumberContainer>
       <Card>
         <InstructionText style={styles.instructionText}>
-          Higher or lower
+          Lower or Higher
         </InstructionText>
         <ButtonsView>
           <ButtonView>
@@ -88,6 +94,36 @@ export default function GameScreen({ userNumber, onGameOver }) {
           </ButtonView>
         </ButtonsView>
       </Card>
+    </>
+  );
+
+  if (width > 500) {
+    content = (
+      <>
+        <InstructionText style={[styles.instructionText, { fontSize: 14 }]}>
+          Lower or Higher
+        </InstructionText>
+        <ButtonsView style={{ flexDirection: "row", alignItems: "center" }}>
+          <ButtonView>
+            <PrimaryButton onPress={nextGuessHandler.bind(this, "lower")}>
+              <Ionicons name="md-remove" size={24} color={"white"} />
+            </PrimaryButton>
+          </ButtonView>
+          <NumberContainer>{currentGuess}</NumberContainer>
+          <ButtonView>
+            <PrimaryButton onPress={nextGuessHandler.bind(this, "greater")}>
+              <Ionicons name="md-add" size={24} color={"white"} />
+            </PrimaryButton>
+          </ButtonView>
+        </ButtonsView>
+      </>
+    );
+  }
+
+  return (
+    <View style={styles.screen}>
+      <Title>Opponent's Guess</Title>
+      {content}
       <SafeAreaView style={styles.listContainer}>
         <FlatList
           data={guessRounds}
